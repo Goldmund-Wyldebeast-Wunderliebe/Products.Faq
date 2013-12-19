@@ -1,0 +1,14 @@
+#content #faq-list {
+    list-style-type: none;
+    margin-left: 0;
+}
+
+.faq_question {
+    margin-left: 1em;
+}
+
+.faq_answer {
+    margin: 1em;
+    padding: 0.5em;
+    display: none;
+}
