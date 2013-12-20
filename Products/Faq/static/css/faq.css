@@ -17,6 +17,9 @@
     border: 1px solid silver;
     background: #eaeaea;
 }
+#faq-list-nav {
+    margin-bottom: 10px;
+}
 
 .rotate {
     opacity: 1;
