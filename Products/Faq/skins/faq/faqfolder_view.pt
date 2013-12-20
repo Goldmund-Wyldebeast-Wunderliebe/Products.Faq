@@ -10,69 +10,12 @@
         i18n:domain="faq">
 
 <metal:javascriptslot fill-slot="javascript_head_slot">
-    <script type="text/javascript" tal:attributes="src string:${portal_url}/jquery.listnav.js"></script>
-    <script type="text/javascript" language="JavaScript">
-        <!--
-        faq_displayAll = 0;
-        faq_items = 0;
-
-        function toggle(id) {
-            el = document.getElementById("faq_" + id);
-            icon = document.getElementById("icon_" + id);
-            if (el) {
-                if (el.style.display == "block") {
-                    el.style.display = "none";
-                    icon.src = "treeCollapsed.gif";
-                } else {
-                    el.style.display = "block";
-                    icon.src = "treeExpanded.gif";
-                }
-            }
-        }
-
-        function toggle_all(faq_items) {
-            for (var i = 1; i <= faq_items; i++) {
-                el = document.getElementById("faq_" + i);
-                icon = document.getElementById("icon_" + i);
-                if (el) {
-                    if (faq_displayAll) {
-                        el.style.display = "none";
-                        icon.src = "treeCollapsed.gif";
-                    } else {
-                        el.style.display = "block";
-                        icon.src = "treeExpanded.gif";
-                    }
-                }
-            }
-            faq_displayAll = (faq_displayAll ? 0 : 1);
-        }
-
-        function overLinkStyle(link_id) {
-            document.getElementById(link_id).style.cursor = 'pointer';
-        }
-
-        function outLinkStyle(link_id) {
-            document.getElementById(link_id).style.cursor = 'default';
-        }
-        -->
-    </script>
-    <script type="text/javascript" language="JavaScript">
-        $(document).ready(function() {
-            $('#faq-list').listnav({
-                showCounts:false
-            });
-
-            $('.ln-disabled').click(function(e) {
-                e.preventDefault();
-                return false;
-            });
-
-        });
-    </script>
+    <script type="text/javascript" tal:attributes="src string:${portal_url}/++resource++products.faq/javascript/jquery.listnav.js"></script>
+    <script type="text/javascript" tal:attributes="src string:${portal_url}/++resource++products.faq/javascript/products.faq.js"></script>
 </metal:javascriptslot>
 
 <metal:cssslot fill-slot="style_slot">
-    <link rel="stylesheet" type="text/css" tal:attributes="href string:${portal_url}/faq.css" />
+    <link rel="stylesheet" type="text/css" tal:attributes="href string:${portal_url}/++resource++products.faq/css/faq.css" />
 </metal:cssslot>
 
 <body>
@@ -81,18 +24,6 @@
             tal:define="kssClassesView context/@@kss_field_decorator_view;
             getKssClasses nocall:kssClassesView/getKssClassesInlineEditable;">
 
-        <div tal:replace="structure provider:plone.abovecontenttitle" />
-        <h1 metal:use-macro="here/kss_generic_macros/macros/generic_title_view">
-            Title or id
-        </h1>
-
-        <div tal:replace="structure provider:plone.belowcontenttitle" />
-
-        <p metal:use-macro="here/kss_generic_macros/macros/generic_description_view">
-            Description
-        </p>
-
-        <div tal:replace="structure provider:plone.abovecontentbody" />
 
         <tal:faq define="faqs python:context.getFolderContents(contentFilter={'portal_type' :['FaqEntry']}, full_objects=True);
                       items python:len(faqs);
@@ -101,35 +32,48 @@
 
 
 
-            <button class="context" i18n:translate="toggle_all"
-                    onclick="toggle_all(faq_items)" tal:attributes="onclick python:'toggle_all(%s)' % items">Show/Hide
-                all
-            </button>
 
             <div id="faq-list-nav"></div>
 
-            <ul id="faq-list">
+
+            <div tal:replace="structure provider:plone.abovecontenttitle" />
+            <h1 metal:use-macro="here/kss_generic_macros/macros/generic_title_view">
+                Title or id
+            </h1>
+
+            <div tal:replace="structure provider:plone.belowcontenttitle" />
+
+            <p metal:use-macro="here/kss_generic_macros/macros/generic_description_view">
+                Description
+            </p>
+
+            <div tal:replace="structure provider:plone.abovecontentbody" />
+
+            <button class="context faq-show-all" tal:attributes="onclick python:'toggle_all(%s)' % items">
+                Toon Alles
+            </button>
+
+            <ol id="faq-list">
                 <tal:entries tal:repeat="entry faqs">
-                    <li tal:define="md python:DateTime(entry.ModificationDate()); delay here/delay;">
-                        <img i18n:attributes="title showhide_answer;alt showhide_answer" title="Show or Hide answer"
-                                                                                         alt="Show or Hide answer"
-                                tal:attributes="id string:icon_${repeat/entry/number};
-                                onclick string:javascript:toggle('${repeat/entry/number}');
-                                src string:${portal_url}/treeCollapsed.gif;
-                                onmouseover string:javascript:overLinkStyle('icon_${repeat/entry/number}');
-                                onmouseout string:javascript:outLinkStyle('icon_${repeat/entry/number}')" />
+                    <li tal:define="md python:DateTime(entry.ModificationDate()); delay here/delay;"
+                            tal:attributes="id string:icon_${repeat/entry/number};">
+                        <img i18n:attributes="title showhide_answer; alt showhide_answer"
+                                title="Show or Hide answer"
+                                alt="Show or Hide answer"
+                                tal:attributes="src string:${portal_url}/++resource++products.faq/images/arrow.png"
+                                class="toggle-button"
+                                />
+
+                        <a href="#" tal:content="entry/Title" class="faq-title">Title</a>
                         <img i18n:attributes="alt new; title new" class="new" alt="New" title="New"
                                                                   src="" tal:attributes="src string:$portal_url/new.gif"
                                 tal:condition="python: (md + delay).toZone('GMT+2').greaterThan(datenow)"/>
-                        <a href="#" tal:content="entry/Title"
-                                tal:attributes="href string:javascript:toggle('${repeat/entry/number}');">Title</a>
                         <p class="faq_question" tal:content="entry/Description">Question</p>
-                        <div class="faq_answer" tal:attributes="id string:faq_${repeat/entry/number}" tal:content="structure entry/getAnswer">
-                            Answer
-                        </div>
+                        <div class="faq_answer" tal:content="structure entry/getAnswer">Answer</div>
                     </li>
                 </tal:entries>
-            </ul>
+            </ol>
+
 
             <div tal:repeat="folder python:here.getFolderContents(contentFilter={'portal_type' :['FaqFolder']}, full_objects=True)">
                 <h2><a href="" tal:content="folder/Title"
