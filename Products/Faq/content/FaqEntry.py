@@ -37,6 +37,7 @@ schema['description'].widget.label = _(u'label_detailed_question',
 schema['description'].widget.description = _(u'desc_detailed_question',
                                              default=u'More details on the question, '
                                                      u'if not evident from the title.')
+schema['description'].widget.visible = {"edit": "invisible", "view": "invisible"}
 
 schema['excludeFromNav'].default = True
 
